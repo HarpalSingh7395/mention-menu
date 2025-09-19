@@ -144,6 +144,18 @@ export function useMentionInput(
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Handle backspace for removing selected values when input is empty
+      if (e.key === 'Backspace') {
+        if (input.trim() === '' && value.length > 0) {
+          e.preventDefault();
+          // Remove the last selected value
+          const newValue = [...value];
+          newValue.pop();
+          onChange(newValue);
+          return;
+        }
+      }
+
       if (!showMenu) {
         // only open on "@"
         if (e.key === '@') {
@@ -171,7 +183,7 @@ export function useMentionInput(
         closeMenu();
       }
     },
-    [showMenu, filteredOptions, activeIndex, handleSelect, closeMenu]
+    [input, value, onChange, showMenu, filteredOptions, activeIndex, handleSelect, closeMenu]
   );
 
   return {
