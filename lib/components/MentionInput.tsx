@@ -1,9 +1,12 @@
+// components/MentionInput.tsx
+
 import React from 'react';
 import type { MentionInputProps } from '../types/MentionInput.types';
 import { useMentionInput } from '../hooks/useMentionInput';
 import { DefaultBadge, DefaultSuggestion, DefaultDropdownItem } from './DefaultComponents';
 import { classNames } from '../utils/MentionInput.utils';
 import '../styles/MentionInput.css';
+import { MentionMenu } from './MentionMenu';
 
 export const MentionInput: React.FC<MentionInputProps> = ({
   options,
@@ -32,6 +35,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
     handleInputChange,
     handleKeyDown,
     handleSearchChange,
+    setActiveIndex,
   } = useMentionInput(options, value, onChange);
 
   const limitedSuggestions = unselectedOptions.slice(0, suggestionLimit);
@@ -48,7 +52,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
         {value.map((val) => {
           const option = options.find((o) => o.value === val);
           if (!option) return null;
-          
+
           return (
             <BadgeComponent
               key={option.value}
@@ -86,48 +90,18 @@ export const MentionInput: React.FC<MentionInputProps> = ({
       </div>
 
       {/* Floating Dropdown */}
-      {showMenu && (
-        <div
-          ref={dropdownRef}
-          className={classNames('mention-input-dropdown', customClassNames.dropdown)}
-          style={{
-            position: 'fixed',
-            left: `${dropdownPosition.x}px`,
-            top: `${dropdownPosition.y}px`,
-          }}
-        >
-          {/* Search Input */}
-          <input
-            className={classNames('mention-input-dropdown-search', customClassNames.dropdownSearch)}
-            placeholder="Search..."
-            value={mentionQuery}
-            onChange={handleSearchChange}
-            type="text"
-          />
-
-          {/* Options List */}
-          <div className={classNames('mention-input-dropdown-list', customClassNames.dropdownList)}>
-            {filteredOptions.length === 0 ? (
-              <div className={classNames('mention-input-dropdown-empty', customClassNames.dropdownEmpty)}>
-                No results found.
-              </div>
-            ) : (
-              filteredOptions.map((option, index) => (
-                <DropdownItemComponent
-                  key={option.value}
-                  option={option}
-                  isActive={index === activeIndex}
-                  onSelect={() => handleSelect(option)}
-                  className={classNames(
-                    customClassNames.dropdownItem,
-                    index === activeIndex && customClassNames.dropdownItemActive
-                  )}
-                />
-              ))
-            )}
-          </div>
-        </div>
-      )}
+      {showMenu && (<MentionMenu
+        inputRef={inputRef}
+        options={filteredOptions}
+        activeIndex={activeIndex}
+        mentionQuery={mentionQuery}
+        show={showMenu}
+        onSelect={handleSelect}
+        onSearchChange={handleSearchChange}
+        setActiveIndex={setActiveIndex}
+        customClassNames={customClassNames}
+        DropdownItemComponent={DropdownItemComponent}
+      />)}
     </div>
   );
 };

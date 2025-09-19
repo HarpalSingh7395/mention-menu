@@ -101,8 +101,8 @@ export const MentionInputExample: React.FC = () => {
         <h2>Without Inline Suggestions</h2>
         <MentionInput
           options={users}
-          value={[]}
-          onChange={() => {}}
+          value={selectedUsers}
+          onChange={setSelectedUsers}
           placeholder="Type @ to mention (no suggestions)..."
           showSuggestions={false}
         />
@@ -113,8 +113,8 @@ export const MentionInputExample: React.FC = () => {
         <h2>Limited Suggestions (2 items)</h2>
         <MentionInput
           options={users}
-          value={[]}
-          onChange={() => {}}
+          value={selectedUsers}
+          onChange={setSelectedUsers}
           placeholder="Type @ to mention (limited suggestions)..."
           showSuggestions={true}
           suggestionLimit={2}
@@ -126,8 +126,8 @@ export const MentionInputExample: React.FC = () => {
         <h2>With Custom Styling</h2>
         <MentionInput
           options={users}
-          value={[]}
-          onChange={() => {}}
+          value={selectedUsers}
+          onChange={setSelectedUsers}
           placeholder="Styled mention input..."
           classNames={customClassNames}
         />

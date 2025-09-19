@@ -1,127 +1,184 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { type MentionOption } from '../types/MentionInput.types';
-import { getCaretOffsetInInput, calculateDropdownPosition } from '../utils/MentionInput.utils';
+// hooks/useMentionInput.ts
+import { useCallback, useMemo, useRef, useState } from 'react';
+import type { MentionOption } from '../types/MentionInput.types';
+
+type UseMentionInputReturn = {
+  input: string;
+  mentionQuery: string;
+  showMenu: boolean;
+  activeIndex: number;
+  filteredOptions: MentionOption[];
+  unselectedOptions: MentionOption[];
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+  handleSelect: (opt: MentionOption) => void;
+  handleRemove: (value: string) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setActiveIndex: (i: number) => void;
+};
 
 export function useMentionInput(
   options: MentionOption[],
   value: string[],
-  onChange: (values: string[]) => void
-) {
+  onChange: (next: string[]) => void
+): UseMentionInputReturn {
   const [input, setInput] = useState('');
   const [mentionQuery, setMentionQuery] = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Filter options based on query and current selections
-  const filteredOptions = options.filter(
-    (opt) =>
-      opt.label.toLowerCase().includes(mentionQuery.toLowerCase()) &&
-      !value.includes(opt.value)
+  const unselectedOptions = useMemo(
+    () => options.filter((o) => !value.includes(o.value)),
+    [options, value]
   );
 
-  const unselectedOptions = options.filter((opt) => !value.includes(opt.value));
+  const filteredOptions = useMemo(() => {
+    if (!mentionQuery) return unselectedOptions;
+    const q = mentionQuery.toLowerCase();
+    return unselectedOptions.filter((o) => {
+      const label = (o.label ?? o.value).toString().toLowerCase();
+      return label.includes(q) || o.value.toLowerCase().includes(q);
+    });
+  }, [mentionQuery, unselectedOptions]);
 
-  const handleSelect = useCallback((option: MentionOption) => {
-    onChange([...value, option.value]);
-    setInput('');
+  const closeMenu = useCallback(() => {
     setShowMenu(false);
     setMentionQuery('');
     setActiveIndex(0);
-    inputRef.current?.focus();
-  }, [value, onChange]);
-
-  const handleRemove = useCallback((valueToRemove: string) => {
-    onChange(value.filter((v) => v !== valueToRemove));
-  }, [value, onChange]);
-
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setInput(val);
-
-    if (val.includes('@')) {
-      const atIndex = val.lastIndexOf('@');
-      const query = val.slice(atIndex + 1);
-      setMentionQuery(query);
-      setShowMenu(true);
-
-      if (inputRef.current) {
-        const inputRect = inputRef.current.getBoundingClientRect();
-        const caretOffset = getCaretOffsetInInput(inputRef.current, e.target.selectionStart || 0);
-        const position = calculateDropdownPosition(inputRect, caretOffset);
-        setDropdownPosition(position);
-      }
-    } else {
-      setShowMenu(false);
-      setMentionQuery('');
-    }
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showMenu && filteredOptions.length > 0) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActiveIndex((prev) => (prev + 1) % filteredOptions.length);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActiveIndex((prev) =>
-          prev - 1 < 0 ? filteredOptions.length - 1 : prev - 1
-        );
-      } else if (e.key === 'Enter' || e.key === 'Tab') {
-        e.preventDefault();
-        if (filteredOptions[activeIndex]) {
-          handleSelect(filteredOptions[activeIndex]);
-        }
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        setShowMenu(false);
-      }
+  const handleRemove = useCallback(
+    (val: string) => {
+      onChange(value.filter((v) => v !== val));
+    },
+    [onChange, value]
+  );
+
+  const insertMentionToken = useCallback((opt: MentionOption) => {
+    const el = inputRef.current;
+    if (!el) {
+      // fallback: append token and update selected values
+      setInput("");
+      onChange([...value, opt.value]);
+      return;
     }
 
-    if (e.key === 'Backspace' && input === '' && value.length > 0) {
-      e.preventDefault();
-      onChange(value.slice(0, -1));
+    const cursor = el.selectionStart ?? el.value.length;
+    // find last @ before cursor which starts a mention
+    const text = el.value;
+    const lastAt = text.lastIndexOf('@', cursor - 1);
+
+    if (lastAt === -1) {
+      // just append
+      setInput("");
+      onChange([...value, opt.value]);
+      // move caret after inserted token
+      window.requestAnimationFrame(() => {
+        el.focus();
+        el.setSelectionRange(cursor + opt.value.length + 2, cursor + opt.value.length + 2);
+      });
+      return;
     }
-  }, [showMenu, filteredOptions, activeIndex, input, value, handleSelect, onChange]);
+
+    // Replace the @query with the resolved mention token
+    // include trailing space after mention for convenience
+    const before = text.slice(0, lastAt);
+    setInput("");
+    onChange([...value, opt.value]);
+
+    // put caret after inserted token
+    window.requestAnimationFrame(() => {
+      el.focus();
+      const pos = before.length + opt.value.length + 2;
+      el.setSelectionRange(pos, pos);
+    });
+  }, [onChange, value]);
+
+  const handleSelect = useCallback(
+    (opt: MentionOption) => {
+      insertMentionToken(opt);
+      closeMenu();
+    },
+    [insertMentionToken, closeMenu]
+  );
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const el = e.target;
+      const val = el.value;
+      setInput(val);
+
+      const cursor = el.selectionStart ?? val.length;
+
+      // find last @ before cursor
+      const lastAt = val.lastIndexOf('@', cursor - 1);
+      if (lastAt === -1) {
+        closeMenu();
+        return;
+      }
+
+      // ensure '@' is at start or preceded by whitespace
+      const charBefore = lastAt > 0 ? val[lastAt - 1] : ' ';
+      if (charBefore !== ' ' && charBefore !== '\n' && charBefore !== '\t') {
+        closeMenu();
+        return;
+      }
+
+      const q = val.slice(lastAt + 1, cursor);
+      setMentionQuery(q);
+      setShowMenu(true);
+      setActiveIndex(0);
+    },
+    [closeMenu]
+  );
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setMentionQuery(e.target.value);
     setActiveIndex(0);
   }, []);
 
-  // Handle clicks outside dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
-      ) {
-        setShowMenu(false);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!showMenu) {
+        // only open on "@"
+        if (e.key === '@') {
+          // let the "@" be entered; show menu will be triggered via onChange handler
+        }
+        return;
       }
-    };
 
-    if (showMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showMenu]);
-
-  // Reset active index when filtered options change
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [filteredOptions.length]);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.min(i + 1, Math.max(0, filteredOptions.length - 1)));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.max(0, i - 1));
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const opt = filteredOptions[activeIndex];
+        if (opt) {
+          handleSelect(opt);
+        } else {
+          closeMenu();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMenu();
+      }
+    },
+    [showMenu, filteredOptions, activeIndex, handleSelect, closeMenu]
+  );
 
   return {
     input,
     mentionQuery,
     showMenu,
     activeIndex,
-    dropdownPosition,
     filteredOptions,
     unselectedOptions,
     inputRef,
