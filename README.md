@@ -47,22 +47,61 @@ function App() {
 }
 ```
 
-## API Reference
+## Components
 
-### Props
+### `MentionInput`
+
+The main component that wraps the mention functionality.
+
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `options` | `MentionOption[]` | Required | Array of available options to mention |
-| `value` | `string[]` | Required | Array of selected option values |
-| `onChange` | `(values: string[]) => void` | Required | Callback when selection changes |
-| `placeholder` | `string` | `"Type @ to mention..."` | Input placeholder text |
-| `showSuggestions` | `boolean` | `true` | Show inline suggestion buttons |
-| `suggestionLimit` | `number` | `5` | Maximum number of suggestions to show |
-| `classNames` | `MentionInputClassNames` | `{}` | Custom CSS classes for styling |
-| `customBadge` | `React.ComponentType` | `undefined` | Custom component for selected badges |
-| `customSuggestion` | `React.ComponentType` | `undefined` | Custom component for suggestions |
-| `customDropdownItem` | `React.ComponentType` | `undefined` | Custom component for dropdown items |
+| `options` | `MentionOption[]` | **Required** | Array of available options to mention. |
+| `value` | `string[]` | **Required** | Array of selected option values. |
+| `onChange` | `(values: string[]) => void` | **Required** | Callback when the selection changes. |
+| `placeholder` | `string` | `"Type @ to mention..."` | Input placeholder text. |
+| `showSuggestions` | `boolean` | `true` | Whether to show inline suggestion buttons. |
+| `suggestionLimit` | `number` | `5` | Maximum number of suggestions to show. |
+| `classNames` | `MentionInputClassNames` | `{}` | Custom CSS classes for styling various parts of the component. |
+| `customBadge` | `React.ComponentType` | `DefaultBadge` | Custom component for rendering selected badges. |
+| `customSuggestion` | `React.ComponentType` | `DefaultSuggestion` | Custom component for rendering inline suggestions. |
+| `customDropdownItem` | `React.ComponentType` | `DefaultDropdownItem` | Custom component for rendering items in the dropdown menu. |
+
+---
+
+### `MentionMenu`
+
+A position-aware dropdown menu for displaying mention suggestions.
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `inputRef` | `React.RefObject<HTMLInputElement>` | **Required** | Ref to the main input element for positioning. |
+| `options` | `MentionOption[]` | **Required** | Array of options to display. |
+| `activeIndex` | `number` | **Required** | The index of the currently active/highlighted option. |
+| `mentionQuery` | `string` | **Required** | The current search query. |
+| `show` | `boolean` | **Required** | Whether the menu should be visible. |
+| `onSelect` | `(opt: MentionOption) => void` | **Required** | Callback when an option is selected. |
+| `onSearchChange` | `(e: React.ChangeEvent<HTMLInputElement>) => void` | **Required** | Callback for the search input. |
+| `setActiveIndex` | `(i: number) => void` | **Required** | Function to set the active index. |
+| `customClassNames` | `Record<string, string>` | `{}` | Custom CSS classes. |
+| `DropdownItemComponent` | `React.FC<any>` | **Required** | The component to render for each item. |
+| `dropdownWidth` | `number` | `280` | The width of the dropdown. |
+| `dropdownHeight` | `number` | `300` | The maximum height of the dropdown. |
+
+---
+
+### Default Components
+
+These are the default components used for rendering parts of the UI. You can replace them by passing your own custom components to `MentionInput`.
+
+- **`DefaultBadge`**: Renders a selected mention item.
+- **`DefaultSuggestion`**: Renders an inline suggestion button.
+- **`DefaultDropdownItem`**: Renders an item in the mention dropdown.
+
+## API Reference
 
 ### Types
 
