@@ -1,36 +1,19 @@
 # MentionInput Component
 
-[![npm version](https://img.shields.io/npm/v/@your-org/mention-input.svg)](https://www.npmjs.com/package/@your-org/mention-input)
-[![npm downloads](https://img.shields.io/npm/dm/@your-org/mention-input.svg)](https://www.npmjs.com/package/@your-org/mention-input)
-[![GitHub stars](https://img.shields.io/github/stars/your-org/mention-input?style=social)](https://github.com/your-org/mention-input)
-[![License](https://img.shields.io/github/license/your-org/mention-input.svg)](./LICENSE)
+A highly customizable and accessible React mention input component built with TypeScript. Features inline suggestions, keyboard navigation, and complete styling control.
 
-> A highly customizable **React mention/autocomplete input** with inline suggestions, keyboard navigation, and full styling control.
+## Features
 
----
+- 🎯 **Flexible Options**: Support for any data structure with icons
+- 🎨 **Fully Customizable**: Custom components and CSS classes for every part
+- ⌨️ **Keyboard Navigation**: Arrow keys, Enter/Tab to select, Escape to close
+- 💡 **Inline Suggestions**: Optional clickable suggestions for quick selection
+- 🔍 **Real-time Filtering**: Search and filter options as you type
+- ♿ **Accessible**: ARIA labels and keyboard support
+- 📱 **Position Aware**: Smart dropdown positioning to stay in viewport
+- 🧪 **Well Tested**: Comprehensive test suite included
 
-## ✨ Features
-
-- 🎯 **Flexible Options** – Works with any data structure, supports icons
-- 🎨 **Fully Customizable** – Replace default components or style with custom CSS
-- ⌨️ **Keyboard Navigation** – Arrow keys, Enter/Tab to select, Escape to close
-- 💡 **Inline Suggestions** – Clickable quick-suggestions
-- 🔍 **Real-time Filtering** – Filter options as you type
-- ♿ **Accessible** – ARIA labels + keyboard support
-- 📱 **Position Aware** – Dropdown stays in viewport
-- 🧪 **Well Tested** – Comprehensive test suite included
-
----
-
-## 📸 Demo
-
-![Mention Input Demo](https://via.placeholder.com/800x400?text=MentionInput+Demo)
-
-👉 Try it live on **[CodeSandbox](https://codesandbox.io/)** (link to your demo).
-
----
-
-## 📦 Installation
+## Installation
 
 ```bash
 npm install @your-org/mention-input
@@ -38,9 +21,7 @@ npm install @your-org/mention-input
 yarn add @your-org/mention-input
 ```
 
----
-
-## 🚀 Basic Usage
+## Basic Usage
 
 ```tsx
 import React, { useState } from 'react';
@@ -66,145 +47,249 @@ function App() {
 }
 ```
 
----
-
-## ⚡ Quick Customization Example
-
-```tsx
-<MentionInput
-  options={users}
-  placeholder="Type @ to mention..."
-  suggestionLimit={3}
-  classNames={{ dropdown: "bg-white shadow-lg" }}
-/>
-```
-
----
-
-## 📚 Components & API
+## Components
 
 ### `MentionInput`
 
+The main component that wraps the mention functionality.
+
+#### Props
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `options` | `MentionOption[]` | **Required** | Array of mentionable options. |
-| `value` | `string[]` | **Required** | Selected option values. |
-| `onChange` | `(values: string[]) => void` | **Required** | Callback on selection change. |
-| `placeholder` | `string` | `"Type @ to mention..."` | Input placeholder. |
-| `showSuggestions` | `boolean` | `true` | Show inline quick-suggestions. |
-| `suggestionLimit` | `number` | `5` | Max suggestions shown. |
-| `classNames` | `MentionInputClassNames` | `{}` | Override CSS classes. |
-| `customBadge` | `React.ComponentType` | `DefaultBadge` | Custom badge renderer. |
-| `customSuggestion` | `React.ComponentType` | `DefaultSuggestion` | Custom suggestion renderer. |
-| `customDropdownItem` | `React.ComponentType` | `DefaultDropdownItem` | Custom dropdown item renderer. |
+| `options` | `MentionOption[]` | **Required** | Array of available options to mention. |
+| `value` | `string[]` | **Required** | Array of selected option values. |
+| `onChange` | `(values: string[]) => void` | **Required** | Callback when the selection changes. |
+| `placeholder` | `string` | `"Type @ to mention..."` | Input placeholder text. |
+| `showSuggestions` | `boolean` | `true` | Whether to show inline suggestion buttons. |
+| `suggestionLimit` | `number` | `5` | Maximum number of suggestions to show. |
+| `classNames` | `MentionInputClassNames` | `{}` | Custom CSS classes for styling various parts of the component. |
+| `customBadge` | `React.ComponentType` | `DefaultBadge` | Custom component for rendering selected badges. |
+| `customSuggestion` | `React.ComponentType` | `DefaultSuggestion` | Custom component for rendering inline suggestions. |
+| `customDropdownItem` | `React.ComponentType` | `DefaultDropdownItem` | Custom component for rendering items in the dropdown menu. |
 
 ---
 
 ### `MentionMenu`
 
+A position-aware dropdown menu for displaying mention suggestions.
+
+#### Props
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `inputRef` | `React.RefObject<HTMLInputElement>` | **Required** | Input ref for positioning. |
-| `options` | `MentionOption[]` | **Required** | Options to display. |
-| `activeIndex` | `number` | **Required** | Currently active index. |
-| `mentionQuery` | `string` | **Required** | Current search query. |
-| `show` | `boolean` | **Required** | Show/hide menu. |
-| `onSelect` | `(opt: MentionOption) => void` | **Required** | Callback on select. |
-| `onSearchChange` | `(e: React.ChangeEvent<HTMLInputElement>) => void` | **Required** | Search input handler. |
-| `setActiveIndex` | `(i: number) => void` | **Required** | Set active index. |
+| `inputRef` | `React.RefObject<HTMLInputElement>` | **Required** | Ref to the main input element for positioning. |
+| `options` | `MentionOption[]` | **Required** | Array of options to display. |
+| `activeIndex` | `number` | **Required** | The index of the currently active/highlighted option. |
+| `mentionQuery` | `string` | **Required** | The current search query. |
+| `show` | `boolean` | **Required** | Whether the menu should be visible. |
+| `onSelect` | `(opt: MentionOption) => void` | **Required** | Callback when an option is selected. |
+| `onSearchChange` | `(e: React.ChangeEvent<HTMLInputElement>) => void` | **Required** | Callback for the search input. |
+| `setActiveIndex` | `(i: number) => void` | **Required** | Function to set the active index. |
 | `customClassNames` | `Record<string, string>` | `{}` | Custom CSS classes. |
-| `DropdownItemComponent` | `React.FC<any>` | **Required** | Dropdown item component. |
-| `dropdownWidth` | `number` | `280` | Width in px. |
-| `dropdownHeight` | `number` | `300` | Max height in px. |
+| `DropdownItemComponent` | `React.FC<any>` | **Required** | The component to render for each item. |
+| `dropdownWidth` | `number` | `280` | The width of the dropdown. |
+| `dropdownHeight` | `number` | `300` | The maximum height of the dropdown. |
 
 ---
 
-## 🛠️ Default Components
+### Default Components
 
-- **`DefaultBadge`** – Renders a selected mention
-- **`DefaultSuggestion`** – Inline suggestion button
-- **`DefaultDropdownItem`** – Dropdown list item
+These are the default components used for rendering parts of the UI. You can replace them by passing your own custom components to `MentionInput`.
 
-Replace via props for full customization.
+- **`DefaultBadge`**: Renders a selected mention item.
+- **`DefaultSuggestion`**: Renders an inline suggestion button.
+- **`DefaultDropdownItem`**: Renders an item in the mention dropdown.
 
----
+## API Reference
 
-## 🎨 Customization Examples
+### Types
 
-### Custom Badge
 ```tsx
-const CustomBadge = ({ option, onRemove }) => (
-  <div className="my-badge">
-    {option.icon} {option.label}
-    <button onClick={onRemove}>✕</button>
+interface MentionOption {
+  value: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+interface MentionInputClassNames {
+  container?: string;
+  selectedContainer?: string;
+  selectedBadge?: string;
+  selectedBadgeIcon?: string;
+  selectedBadgeLabel?: string;
+  selectedBadgeRemove?: string;
+  suggestion?: string;
+  suggestionIcon?: string;
+  suggestionLabel?: string;
+  input?: string;
+  dropdown?: string;
+  dropdownSearch?: string;
+  dropdownList?: string;
+  dropdownEmpty?: string;
+  dropdownItem?: string;
+  dropdownItemActive?: string;
+  dropdownItemIcon?: string;
+  dropdownItemLabel?: string;
+}
+```
+
+## Customization Examples
+
+### Custom Badge Component
+
+```tsx
+const CustomBadge = ({ option, onRemove, className }) => (
+  <div className={`my-badge ${className}`}>
+    {option.icon}
+    <span>{option.label}</span>
+    <button onClick={onRemove} aria-label={`Remove ${option.label}`}>
+      ✕
+    </button>
   </div>
 );
 
-<MentionInput options={options} value={value} onChange={onChange} customBadge={CustomBadge} />
+<MentionInput
+  options={options}
+  value={value}
+  onChange={onChange}
+  customBadge={CustomBadge}
+/>
 ```
 
-### Custom Suggestion
+### Custom Suggestion Component
+
 ```tsx
-const CustomSuggestion = ({ option, onSelect }) => (
-  <button onClick={onSelect}>+ {option.label}</button>
+const CustomSuggestion = ({ option, onSelect, className }) => (
+  <button className={`my-suggestion ${className}`} onClick={onSelect}>
+    <span>+</span>
+    {option.icon}
+    <span>{option.label}</span>
+  </button>
 );
 
-<MentionInput options={options} value={value} onChange={onChange} customSuggestion={CustomSuggestion} />
+<MentionInput
+  options={options}
+  value={value}
+  onChange={onChange}
+  customSuggestion={CustomSuggestion}
+/>
 ```
 
-### Custom Dropdown Item
+### Custom Dropdown Item Component
+
 ```tsx
-const CustomDropdownItem = ({ option, isActive, onSelect }) => (
-  <div className={`item ${isActive ? 'active' : ''}`} onClick={onSelect}>
-    {option.icon} {option.label}
+const CustomDropdownItem = ({ option, isActive, onSelect, className }) => (
+  <div 
+    className={`my-dropdown-item ${isActive ? 'active' : ''} ${className}`}
+    onClick={onSelect}
+  >
+    <div className="icon">{option.icon}</div>
+    <div className="content">
+      <div className="label">{option.label}</div>
+      <div className="value">@{option.value}</div>
+    </div>
   </div>
 );
 
-<MentionInput options={options} value={value} onChange={onChange} customDropdownItem={CustomDropdownItem} />
+<MentionInput
+  options={options}
+  value={value}
+  onChange={onChange}
+  customDropdownItem={CustomDropdownItem}
+/>
 ```
 
----
+### Custom Styling
 
-## ⌨️ Keyboard Navigation
+```tsx
+const customClassNames = {
+  container: 'my-mention-container',
+  selectedContainer: 'my-selected-container',
+  selectedBadge: 'my-badge',
+  input: 'my-input',
+  dropdown: 'my-dropdown',
+  dropdownItem: 'my-dropdown-item',
+  dropdownItemActive: 'my-dropdown-item-active',
+};
 
-- `@` – open menu  
-- `↑/↓` – navigate options  
-- `Enter`/`Tab` – select option  
-- `Esc` – close menu  
-- `Backspace` – remove last selected item (if input empty)  
+<MentionInput
+  options={options}
+  value={value}
+  onChange={onChange}
+  classNames={customClassNames}
+/>
+```
 
----
+## Keyboard Navigation
 
-## 🎭 Styling
+- **@** - Open the mention dropdown
+- **Arrow Up/Down** - Navigate through options
+- **Enter/Tab** - Select highlighted option
+- **Escape** - Close dropdown
+- **Backspace** - Remove last selected item (when input is empty)
 
-Default CSS classes provided:
+## Styling
+
+The component comes with default CSS classes that you can override:
 
 ```css
+/* Import the default styles */
 @import '@your-org/mention-input/styles/MentionInput.css';
 
-.mention-input-container { /* your overrides */ }
-.mention-input-selected-badge { /* custom styles */ }
-.mention-input-dropdown { /* dropdown overrides */ }
+/* Override default styles */
+.mention-input-container {
+  /* Your custom styles */
+}
+
+.mention-input-selected-badge {
+  /* Your custom badge styles */
+}
+
+.mention-input-dropdown {
+  /* Your custom dropdown styles */
+}
 ```
 
----
+## Advanced Usage
 
-## 🔬 Advanced Usage: Hook
+### Using the Hook Directly
 
 ```tsx
 import { useMentionInput } from '@your-org/mention-input';
 
-function CustomInput({ options, value, onChange }) {
-  const { input, mentionQuery, showMenu, activeIndex, filteredOptions, handleSelect } =
-    useMentionInput(options, value, onChange);
+function CustomMentionInput({ options, value, onChange }) {
+  const {
+    input,
+    mentionQuery,
+    showMenu,
+    activeIndex,
+    filteredOptions,
+    inputRef,
+    dropdownRef,
+    handleSelect,
+    handleRemove,
+    handleInputChange,
+    handleKeyDown,
+    // ... other hook returns
+  } = useMentionInput(options, value, onChange);
 
-  return <div>{/* Build your own UI */}</div>;
+  // Build your own UI using the hook
+  return (
+    <div>
+      {/* Your custom implementation */}
+    </div>
+  );
 }
 ```
 
----
+### Server-Side Rendering
 
-## ✅ Testing
+The component is SSR-friendly and doesn't use any browser-only APIs during initial render.
+
+## Testing
+
+Run the test suite:
 
 ```bash
 npm test
@@ -212,40 +297,28 @@ npm test
 yarn test
 ```
 
-Covers rendering, keyboard navigation, hooks, and utilities.
+The component includes comprehensive tests for:
+- Component rendering and interactions
+- Keyboard navigation
+- Custom components
+- Hook behavior
+- Utility functions
 
----
-
-## 🌍 Browser Support
+## Browser Support
 
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
 
----
+## Contributing
 
-## 🤝 Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. Fork the repo  
-2. Create a feature branch  
-3. Commit your changes  
-4. Push and open a PR 🚀  
+## License
 
----
-
-## 💬 Community
-
-- [Issues](https://github.com/your-org/mention-input/issues) – bug reports & feature requests  
-- [Discussions](https://github.com/your-org/mention-input/discussions) – Q&A and ideas  
-
----
-
-## 📄 License
-
-MIT License – see [LICENSE](./LICENSE)
-
----
-
-### 🔍 Keywords
-React mention input, React autocomplete, React mentions component, React dropdown, React text input with mentions, React UI component
+MIT License - see the [LICENSE](LICENSE) file for details.
