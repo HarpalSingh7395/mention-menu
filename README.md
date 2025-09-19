@@ -15,7 +15,7 @@ A highly customizable and accessible React mention input component built with Ty
 
 ## Demo
 
-![Demo of Mention Menu](https://github.com/HarpalSingh7395/blob/main/demo.gif)
+![Demo of Mention Menu](https://github.com/HarpalSingh7395/mention-menu/blob/main/demo.gif)
 
 ## Installation
 
