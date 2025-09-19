@@ -33,7 +33,10 @@ export const MentionMenu: React.FC<MentionMenuProps> = ({
   dropdownHeight = 300,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState({ x: 8, y: 8 });
+
+  // start offscreen so it never visibly snaps to top-left
+  const [coords, setCoords] = useState({ x: -9999, y: -9999 });
+  const [isPositioned, setIsPositioned] = useState(false);
 
   // Recalculate dropdown position
   const updatePosition = () => {
@@ -48,21 +51,43 @@ export const MentionMenu: React.FC<MentionMenuProps> = ({
     // caretOffset relative to inputRect.left
     const caretOffset = Math.max(0, caret.x - inputRect.left);
 
-    // If menu element exists we can try to read its measured size
+    // If menu element exists, prefer its measured size
     const measuredWidth = menuEl ? Math.max(dropdownWidth, menuEl.offsetWidth || 0) : dropdownWidth;
     const measuredHeight = menuEl ? Math.max(dropdownHeight, menuEl.offsetHeight || 0) : dropdownHeight;
 
     const pos = calculateDropdownPosition(inputRect, caretOffset, measuredWidth, measuredHeight);
+
+    // set coords and mark positioned
     setCoords(pos);
+    setIsPositioned(true);
   };
 
   // Update position when shown and add listeners for scroll/resize/selectionchange
   useEffect(() => {
-    if (!show) return;
+    if (!show) {
+      // hide immediately when menu is closed to avoid stale menu visible
+      setIsPositioned(false);
+      setCoords({ x: -9999, y: -9999 });
+      return;
+    }
 
-    updatePosition();
+    // Reset positioned flag and compute position on next paint to avoid flash.
+    setIsPositioned(false);
 
-    const onScroll = () => updatePosition();
+    // double RAF helps ensure DOM has laid out (menuRef will be available), preventing a brief blink.
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        updatePosition();
+        // cleanup of nested RAF
+        cancelAnimationFrame(raf2);
+      });
+      cancelAnimationFrame(raf1);
+    });
+
+    const onScroll = () => {
+      // keep repositioning on scroll (capture phase)
+      updatePosition();
+    };
     const onResize = () => updatePosition();
     const onSelectionChange = () => updatePosition();
 
@@ -71,6 +96,8 @@ export const MentionMenu: React.FC<MentionMenuProps> = ({
     document.addEventListener('selectionchange', onSelectionChange);
 
     return () => {
+      // cancel RAFs and listeners
+      cancelAnimationFrame(raf1);
       window.removeEventListener('scroll', onScroll, true);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('selectionchange', onSelectionChange);
@@ -91,9 +118,14 @@ export const MentionMenu: React.FC<MentionMenuProps> = ({
         width: `${dropdownWidth}px`,
         maxHeight: `${dropdownHeight}px`,
         overflow: 'hidden',
+        // hide until positioned to prevent flicker at (0,0) or small offsets
+        visibility: isPositioned ? 'visible' : 'hidden',
+        pointerEvents: isPositioned ? 'auto' : 'none',
+        opacity: isPositioned ? 1 : 0,
+        transition: 'opacity 120ms ease',
       }}
       role="dialog"
-      aria-hidden={!show}
+      aria-hidden={!isPositioned}
     >
       {/* Search Input */}
       <input
