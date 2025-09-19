@@ -20,9 +20,9 @@
     "url": "https://github.com/HarpalSingh7395/mention-menu/issues"
   },
   "license": "MIT",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "type": "module",
-  "main": "dist/main.cjs.js",
+  "main": "dist/main.js",
   "module": "dist/main.es.js", 
   "types": "dist/main.d.ts",
   "exports": {
@@ -32,8 +32,8 @@
       "require": "./dist/main.cjs.js",
       "default": "./dist/main.es.js"
     },
-    "./css": "./dist/assets/mention-menu.css",
-    "./style.css": "./dist/assets/mention-menu.css"
+    "./css": "./dist/mention-menu.css",
+    "./style.css": "./dist/mention-menu.css"
   },
   "files": [
     "dist"

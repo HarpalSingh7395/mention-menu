@@ -8,9 +8,12 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      entryRoot: 'lib',         // your source folder
-      insertTypesEntry: true,   // creates main.d.ts in dist/
-      exclude: ['**/*.test.*', '**/*.spec.*'],
+      entryRoot: resolve(__dirname, 'lib'),
+      include: ['lib'],
+      insertTypesEntry: true,
+      rollupTypes: true,
+      outDir: 'dist',
+      tsconfigPath: './tsconfig-build.json'
     }),
   ],
   build: {
@@ -23,8 +26,11 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
-        assetFileNames: 'assets/[name][extname]',
-        exports: 'named'
+        exports: 'named',
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        }
       },
     },
     copyPublicDir: false,

@@ -26,7 +26,7 @@ yarn add mention-input
 ```tsx
 import React, { useState } from 'react';
 import { MentionInput, MentionOption } from 'mention-menu';
-import "mention-menu/css"
+import "mention-menu/style.css"
 
 const users: MentionOption[] = [
   { value: '1', label: 'John Doe', icon: <span>👤</span> },
@@ -236,7 +236,7 @@ The component comes with default CSS classes that you can override:
 
 ```css
 /* Import the default styles */
-@import '@import "mention-menu/css"';
+@import '@import "mention-menu/style.css"';
 
 /* Override default styles */
 .mention-input-container {
