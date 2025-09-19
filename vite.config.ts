@@ -21,7 +21,8 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
-        assetFileNames: 'assets/[name][extname]',
+        assetFileNames: 'assets/[name][extname]', 
+        exports: 'named'
       },
     },
     copyPublicDir: false,

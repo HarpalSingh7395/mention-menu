@@ -14,11 +14,16 @@ vi.mock('../utils/MentionInput.utils', () => ({
 }));
 
 // Mock component for dropdown items
-const MockDropdownItemComponent: React.FC<any> = ({ 
-  option, 
-  isActive, 
-  onSelect, 
-  className 
+const MockDropdownItemComponent: React.FC<{
+  option: MentionOption;
+  isActive: boolean;
+  onSelect: () => void;
+  className?: string;
+}> = ({
+  option,
+  isActive,
+  onSelect,
+  className
 }) => (
   <div 
     className={className}
@@ -324,7 +329,7 @@ describe('MentionMenu', () => {
     it('should handle missing inputRef gracefully', () => {
       const propsWithoutInput = {
         ...defaultProps,
-        inputRef: { current: null }
+        inputRef: { current: null } as React.RefObject<HTMLInputElement | null>
       };
       
       expect(() => render(<MentionMenu {...propsWithoutInput} />)).not.toThrow();

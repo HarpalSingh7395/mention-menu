@@ -25,7 +25,7 @@ describe("useMentionInput", () => {
 
     expect(result.current.unselectedOptions).toHaveLength(3);
 
-    rerender({ value: ["alice"] });
+    rerender({ value: ["alice"] as never[] });
     expect(result.current.unselectedOptions.map((o) => o.value)).toEqual([
       "bob",
       "charlie",
@@ -40,7 +40,7 @@ describe("useMentionInput", () => {
     act(() => {
       result.current.handleSearchChange({
         target: { value: "bo" },
-      } as any);
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.mentionQuery).toBe("bo");
@@ -55,7 +55,7 @@ describe("useMentionInput", () => {
     act(() => {
       result.current.handleInputChange({
         target: { value: "hello @a", selectionStart: 8 },
-      } as any);
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.showMenu).toBe(true);
@@ -70,7 +70,7 @@ describe("useMentionInput", () => {
     act(() => {
       result.current.handleInputChange({
         target: { value: "hello world", selectionStart: 11 },
-      } as any);
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.showMenu).toBe(false);
@@ -111,26 +111,26 @@ describe("useMentionInput", () => {
     act(() => {
       result.current.handleInputChange({
         target: { value: "@", selectionStart: 1 },
-      } as any);
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.showMenu).toBe(true);
 
     // arrow down
     act(() => {
-      result.current.handleKeyDown({ key: "ArrowDown", preventDefault: vi.fn() } as any);
+      result.current.handleKeyDown({ key: "ArrowDown", preventDefault: vi.fn() } as unknown as React.KeyboardEvent<HTMLInputElement>);
     });
     expect(result.current.activeIndex).toBe(1);
 
     // arrow up
     act(() => {
-      result.current.handleKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as any);
+      result.current.handleKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as React.KeyboardEvent<HTMLInputElement>);
     });
     expect(result.current.activeIndex).toBe(0);
 
     // enter to select
     act(() => {
-      result.current.handleKeyDown({ key: "Enter", preventDefault: vi.fn() } as any);
+      result.current.handleKeyDown({ key: "Enter", preventDefault: vi.fn() } as unknown as React.KeyboardEvent<HTMLInputElement>);
     });
     expect(onChange).toHaveBeenCalledWith(["alice"]);
   });
@@ -143,13 +143,13 @@ describe("useMentionInput", () => {
     act(() => {
       result.current.handleInputChange({
         target: { value: "@", selectionStart: 1 },
-      } as any);
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.showMenu).toBe(true);
 
     act(() => {
-      result.current.handleKeyDown({ key: "Escape", preventDefault: vi.fn() } as any);
+      result.current.handleKeyDown({ key: "Escape", preventDefault: vi.fn() } as unknown as React.KeyboardEvent<HTMLInputElement>);
     });
 
     expect(result.current.showMenu).toBe(false);

@@ -4,7 +4,7 @@ import { classNames, getCaretCoordinates, calculateDropdownPosition } from '../u
 import type { MentionOption } from '../types/MentionInput.types';
 
 type MentionMenuProps = {
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   options: MentionOption[];
   activeIndex: number;
   mentionQuery: string;
@@ -13,7 +13,12 @@ type MentionMenuProps = {
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setActiveIndex: (i: number) => void;
   customClassNames: Record<string, string>;
-  DropdownItemComponent: React.FC<any>;
+  DropdownItemComponent: React.FC<{
+    option: MentionOption;
+    isActive: boolean;
+    onSelect: () => void;
+    className?: string;
+  }>;
   dropdownWidth?: number;
   dropdownHeight?: number;
 };
@@ -44,7 +49,7 @@ export const MentionMenu: React.FC<MentionMenuProps> = ({
     const menuEl = menuRef.current;
     if (!el) return;
 
-    const caretPos = el.selectionStart ?? (el as any).value.length;
+    const caretPos = el.selectionStart ?? (el as HTMLInputElement).value.length;
     const caret = getCaretCoordinates(el, caretPos); // viewport coords
     const inputRect = el.getBoundingClientRect();
 

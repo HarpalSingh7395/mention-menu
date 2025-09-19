@@ -1,7 +1,7 @@
 // components/MentionInput.tsx
 
 import React from 'react';
-import type { MentionInputProps } from '../types/MentionInput.types';
+import type { MentionInputProps, MentionOption } from '../types/MentionInput.types';
 import { useMentionInput } from '../hooks/useMentionInput';
 import { DefaultBadge, DefaultSuggestion, DefaultDropdownItem } from './DefaultComponents';
 import { classNames } from '../utils/MentionInput.utils';
@@ -97,8 +97,8 @@ export const MentionInput: React.FC<MentionInputProps> = ({
         onSelect={handleSelect}
         onSearchChange={handleSearchChange}
         setActiveIndex={setActiveIndex}
-        customClassNames={customClassNames}
-        DropdownItemComponent={DropdownItemComponent}
+        customClassNames={customClassNames as Record<string, string>}
+        DropdownItemComponent={DropdownItemComponent as React.FC<{ option: MentionOption; isActive: boolean; onSelect: () => void; className?: string; }>}
       />)}
     </div>
   );

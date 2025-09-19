@@ -1,6 +1,6 @@
 // __tests__/components/MentionInput.test.tsx
 import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockedFunction } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MentionInput } from '../components/MentionInput';
@@ -12,7 +12,7 @@ vi.mock('../hooks/useMentionInput', () => ({
   useMentionInput: vi.fn()
 }));
 
-const mockUseMentionInput = useMentionInput as vi.MockedFunction<typeof useMentionInput>;
+const mockUseMentionInput = useMentionInput as MockedFunction<typeof useMentionInput>;
 
 // Mock the MentionMenu component
 vi.mock('../components/MentionMenu', () => ({
@@ -20,7 +20,7 @@ vi.mock('../components/MentionMenu', () => ({
     if (!show) return null;
     return (
       <div data-testid="mention-menu">
-        {options.map((option: MentionOption, index: number) => (
+        {options.map((option: MentionOption) => (
           <div
             key={option.value}
             data-testid={`menu-item-${option.value}`}
@@ -39,10 +39,10 @@ vi.mock('../styles/MentionInput.css', () => ({}));
 
 // Sample test data
 const mockOptions: MentionOption[] = [
-  { value: 'user1', label: 'John Doe', avatar: 'https://example.com/john.jpg' },
-  { value: 'user2', label: 'Jane Smith', avatar: 'https://example.com/jane.jpg' },
-  { value: 'user3', label: 'Bob Johnson', avatar: 'https://example.com/bob.jpg' },
-  { value: 'user4', label: 'Alice Brown', avatar: 'https://example.com/alice.jpg' },
+  { value: 'user1', label: 'John Doe' },
+  { value: 'user2', label: 'Jane Smith' },
+  { value: 'user3', label: 'Bob Johnson' },
+  { value: 'user4', label: 'Alice Brown' },
 ];
 
 const defaultHookReturn = {
@@ -53,6 +53,7 @@ const defaultHookReturn = {
   filteredOptions: [],
   unselectedOptions: mockOptions,
   inputRef: { current: null },
+  dropdownRef: { current: null },
   handleSelect: vi.fn(),
   handleRemove: vi.fn(),
   handleInputChange: vi.fn(),
@@ -453,7 +454,7 @@ describe('MentionInput', () => {
       render(
         <MentionInput 
           {...defaultProps} 
-          value={['user1', null as any, undefined as any]}
+          value={['user1', null as unknown as string, undefined as unknown as string]}
         />
       );
 
@@ -502,6 +503,7 @@ describe('MentionInput', () => {
         filteredOptions: mockOptions.slice(0, 2),
         unselectedOptions: mockOptions.slice(2),
         inputRef: { current: null },
+        dropdownRef: { current: null },
         handleSelect: vi.fn(),
         handleRemove: vi.fn(),
         handleInputChange: vi.fn(),

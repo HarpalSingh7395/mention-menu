@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { MentionInput } from '../components/MentionInput';
@@ -26,7 +27,7 @@ const mockInputRect = {
 describe('MentionInput Positioning', () => {
   beforeEach(() => {
     // Mock getBoundingClientRect
-    HTMLElement.prototype.getBoundingClientRect = jest.fn(() => mockInputRect);
+    HTMLElement.prototype.getBoundingClientRect = vi.fn(() => mockInputRect);
     
     // Mock window dimensions
     Object.defineProperty(window, 'innerWidth', {
@@ -56,7 +57,7 @@ describe('MentionInput Positioning', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('positions dropdown relative to @ symbol', async () => {

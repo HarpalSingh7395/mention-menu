@@ -1,4 +1,18 @@
 {
-  "extends": "./tsconfig.json",
-  "include": ["lib"]
+  "extends": "./tsconfig.app.json",
+  "include": ["lib"],
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+
+    /* Fix CommonJS interop issues */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "verbatimModuleSyntax": false
+  }
 }

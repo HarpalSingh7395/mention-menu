@@ -11,13 +11,11 @@ vi.mock('../utils/MentionInput.utils', () => ({
 
 // Sample test data
 const mockOption: MentionOption = {
-  id: 'test-1',
   label: 'Test Option',
   value: 'test-option'
 };
 
 const mockOptionWithIcon: MentionOption = {
-  id: 'test-2',
   label: 'Option with Icon',
   value: 'option-with-icon',
   icon: '🔥'
@@ -328,7 +326,6 @@ describe('DefaultDropdownItem', () => {
 describe('Component Integration', () => {
   it('should handle complex option objects consistently across all components', () => {
     const complexOption: MentionOption = {
-      id: 'complex-1',
       label: 'Complex Option with Special Characters & Symbols',
       value: 'complex-option',
       icon: '⚡'
@@ -364,7 +361,6 @@ describe('Component Integration', () => {
 
   it('should handle empty or minimal option objects', () => {
     const minimalOption: MentionOption = {
-      id: '',
       label: '',
       value: ''
     };
