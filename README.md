@@ -13,6 +13,10 @@ A highly customizable and accessible React mention input component built with Ty
 - 📱 **Position Aware**: Smart dropdown positioning to stay in viewport
 - 🧪 **Well Tested**: Comprehensive test suite included
 
+## Demo
+
+![Demo of Mention Menu](https://github.com/HarpalSingh7395/blob/main/demo.gif)
+
 ## Installation
 
 ```bash
