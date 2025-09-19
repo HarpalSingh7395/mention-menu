@@ -20,17 +20,28 @@
     "url": "https://github.com/HarpalSingh7395/mention-menu/issues"
   },
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "type": "module",
-  "main": "dist/main.js",
+  "main": "dist/main.cjs.js",
+  "module": "dist/main.es.js", 
   "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.es.js",
+      "require": "./dist/main.cjs.js",
+      "default": "./dist/main.es.js"
+    },
+    "./css": "./dist/assets/mention-menu.css",
+    "./style.css": "./dist/assets/mention-menu.css"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "vite",
     "test": "vitest",
-    "build": "tsc --p ./tsconfig-build.json && vite build",
+    "build": "tsc -p ./tsconfig-build.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepublishOnly": "npm run build"
@@ -66,7 +77,5 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
-  "sideEffects": [
-    "**/*.css"
-  ]
+  "sideEffects": ["**/*.css", "dist/assets/*.css"]
 }

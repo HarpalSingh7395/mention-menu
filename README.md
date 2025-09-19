@@ -16,16 +16,17 @@ A highly customizable and accessible React mention input component built with Ty
 ## Installation
 
 ```bash
-npm install @your-org/mention-input
+npm install mention-input
 # or
-yarn add @your-org/mention-input
+yarn add mention-input
 ```
 
 ## Basic Usage
 
 ```tsx
 import React, { useState } from 'react';
-import { MentionInput, MentionOption } from '@your-org/mention-input';
+import { MentionInput, MentionOption } from 'mention-menu';
+import "mention-menu/css"
 
 const users: MentionOption[] = [
   { value: '1', label: 'John Doe', icon: <span>👤</span> },
@@ -235,7 +236,7 @@ The component comes with default CSS classes that you can override:
 
 ```css
 /* Import the default styles */
-@import '@your-org/mention-input/styles/MentionInput.css';
+@import '@import "mention-menu/css"';
 
 /* Override default styles */
 .mention-input-container {
@@ -256,7 +257,7 @@ The component comes with default CSS classes that you can override:
 ### Using the Hook Directly
 
 ```tsx
-import { useMentionInput } from '@your-org/mention-input';
+import { useMentionInput } from 'mention-menu';
 
 function CustomMentionInput({ options, value, onChange }) {
   const {
