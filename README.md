@@ -20,9 +20,9 @@ A highly customizable and accessible React mention input component built with Ty
 ## Installation
 
 ```bash
-npm install mention-input
+npm install mention-menu
 # or
-yarn add mention-input
+yarn add mention-menu
 ```
 
 ## Basic Usage
