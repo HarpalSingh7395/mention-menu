@@ -30,6 +30,7 @@ export interface MentionInputProps {
   value: string[];
   onChange: (values: string[]) => void;
   placeholder?: string;
+  trigger?: string;
   showSuggestions?: boolean;
   suggestionLimit?: number;
   classNames?: MentionInputClassNames;

@@ -1,5 +1,3 @@
-// components/MentionInput.tsx
-
 import React from 'react';
 import type { MentionInputProps, MentionOption } from '../types/MentionInput.types';
 import { useMentionInput } from '../hooks/useMentionInput';
@@ -13,6 +11,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
   value,
   onChange,
   placeholder = 'Type @ to mention...',
+  trigger = '@', // New trigger prop with default
   showSuggestions = true,
   suggestionLimit = 5,
   classNames: customClassNames = {},
@@ -24,6 +23,7 @@ export const MentionInput: React.FC<MentionInputProps> = ({
     input,
     mentionQuery,
     showMenu,
+    onClose,
     activeIndex,
     filteredOptions,
     unselectedOptions,
@@ -34,13 +34,18 @@ export const MentionInput: React.FC<MentionInputProps> = ({
     handleKeyDown,
     handleSearchChange,
     setActiveIndex,
-  } = useMentionInput(options, value, onChange);
+  } = useMentionInput(options, value, onChange, trigger); // Pass trigger to hook
 
   const limitedSuggestions = unselectedOptions.slice(0, suggestionLimit);
-
+  
   const BadgeComponent = CustomBadge || DefaultBadge;
   const SuggestionComponent = CustomSuggestion || DefaultSuggestion;
   const DropdownItemComponent = CustomDropdownItem || DefaultDropdownItem;
+
+  // Update placeholder dynamically based on trigger
+  const dynamicPlaceholder = placeholder === 'Type @ to mention...' 
+    ? `Type ${trigger} to mention...`
+    : placeholder;
 
   return (
     <div className={classNames('mention-input-container', customClassNames.container)}>
@@ -50,7 +55,6 @@ export const MentionInput: React.FC<MentionInputProps> = ({
         {value.map((val) => {
           const option = options.find((o) => o.value === val);
           if (!option) return null;
-
           return (
             <BadgeComponent
               key={option.value}
@@ -82,24 +86,32 @@ export const MentionInput: React.FC<MentionInputProps> = ({
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={dynamicPlaceholder}
           type="text"
         />
       </div>
 
       {/* Floating Dropdown */}
-      {showMenu && (<MentionMenu
-        inputRef={inputRef}
-        options={filteredOptions}
-        activeIndex={activeIndex}
-        mentionQuery={mentionQuery}
-        show={showMenu}
-        onSelect={handleSelect}
-        onSearchChange={handleSearchChange}
-        setActiveIndex={setActiveIndex}
-        customClassNames={customClassNames as Record<string, string>}
-        DropdownItemComponent={DropdownItemComponent as React.FC<{ option: MentionOption; isActive: boolean; onSelect: () => void; className?: string; }>}
-      />)}
+      {showMenu && (
+        <MentionMenu
+          inputRef={inputRef}
+          options={filteredOptions}
+          activeIndex={activeIndex}
+          mentionQuery={mentionQuery}
+          show={showMenu}
+          onClose={onClose}
+          onSelect={handleSelect}
+          onSearchChange={handleSearchChange}
+          setActiveIndex={setActiveIndex}
+          customClassNames={customClassNames as Record<string, string>}
+          DropdownItemComponent={DropdownItemComponent as React.FC<{ 
+            option: MentionOption; 
+            isActive: boolean; 
+            onSelect: () => void; 
+            className?: string; 
+          }>}
+        />
+      )}
     </div>
   );
 };

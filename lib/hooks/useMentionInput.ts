@@ -1,4 +1,3 @@
-// hooks/useMentionInput.ts
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { MentionOption } from '../types/MentionInput.types';
 
@@ -6,6 +5,7 @@ type UseMentionInputReturn = {
   input: string;
   mentionQuery: string;
   showMenu: boolean;
+  onClose: () => void;
   activeIndex: number;
   filteredOptions: MentionOption[];
   unselectedOptions: MentionOption[];
@@ -22,7 +22,8 @@ type UseMentionInputReturn = {
 export function useMentionInput(
   options: MentionOption[],
   value: string[],
-  onChange: (next: string[]) => void
+  onChange: (next: string[]) => void,
+  trigger = '@' // Default trigger character
 ): UseMentionInputReturn {
   const [input, setInput] = useState('');
   const [mentionQuery, setMentionQuery] = useState('');
@@ -69,11 +70,11 @@ export function useMentionInput(
     }
 
     const cursor = el.selectionStart ?? el.value.length;
-    // find last @ before cursor which starts a mention
+    // find last trigger before cursor which starts a mention
     const text = el.value;
-    const lastAt = text.lastIndexOf('@', cursor - 1);
+    const lastTrigger = text.lastIndexOf(trigger, cursor - 1);
 
-    if (lastAt === -1) {
+    if (lastTrigger === -1) {
       // just append
       setInput("");
       onChange([...value, opt.value]);
@@ -85,9 +86,9 @@ export function useMentionInput(
       return;
     }
 
-    // Replace the @query with the resolved mention token
+    // Replace the trigger+query with the resolved mention token
     // include trailing space after mention for convenience
-    const before = text.slice(0, lastAt);
+    const before = text.slice(0, lastTrigger);
     setInput("");
     onChange([...value, opt.value]);
 
@@ -97,7 +98,7 @@ export function useMentionInput(
       const pos = before.length + opt.value.length + 2;
       el.setSelectionRange(pos, pos);
     });
-  }, [onChange, value]);
+  }, [onChange, value, trigger]);
 
   const handleSelect = useCallback(
     (opt: MentionOption) => {
@@ -115,26 +116,26 @@ export function useMentionInput(
 
       const cursor = el.selectionStart ?? val.length;
 
-      // find last @ before cursor
-      const lastAt = val.lastIndexOf('@', cursor - 1);
-      if (lastAt === -1) {
+      // find last trigger before cursor
+      const lastTrigger = val.lastIndexOf(trigger, cursor - 1);
+      if (lastTrigger === -1) {
         closeMenu();
         return;
       }
 
-      // ensure '@' is at start or preceded by whitespace
-      const charBefore = lastAt > 0 ? val[lastAt - 1] : ' ';
+      // ensure trigger is at start or preceded by whitespace
+      const charBefore = lastTrigger > 0 ? val[lastTrigger - 1] : ' ';
       if (charBefore !== ' ' && charBefore !== '\n' && charBefore !== '\t') {
         closeMenu();
         return;
       }
 
-      const q = val.slice(lastAt + 1, cursor);
+      const q = val.slice(lastTrigger + 1, cursor);
       setMentionQuery(q);
       setShowMenu(true);
       setActiveIndex(0);
     },
-    [closeMenu]
+    [closeMenu, trigger]
   );
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,9 +158,9 @@ export function useMentionInput(
       }
 
       if (!showMenu) {
-        // only open on "@"
-        if (e.key === '@') {
-          // let the "@" be entered; show menu will be triggered via onChange handler
+        // only open on trigger character
+        if (e.key === trigger) {
+          // let the trigger be entered; show menu will be triggered via onChange handler
         }
         return;
       }
@@ -183,13 +184,14 @@ export function useMentionInput(
         closeMenu();
       }
     },
-    [input, value, onChange, showMenu, filteredOptions, activeIndex, handleSelect, closeMenu]
+    [input, value, onChange, showMenu, filteredOptions, activeIndex, handleSelect, closeMenu, trigger]
   );
 
   return {
     input,
     mentionQuery,
     showMenu,
+    onClose: () => setShowMenu(false),
     activeIndex,
     filteredOptions,
     unselectedOptions,
